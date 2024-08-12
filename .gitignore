@@ -1,0 +1,13 @@
+node_modules
+.cache/
+
+sqlite3/*.a
+sqlite3/*.o
+sqlite3/*.so
+aos/process/libs
+
+**/*.so
+**/process.js
+**/process.wasm
+**/package-lock.json
+**/yarn.lock
