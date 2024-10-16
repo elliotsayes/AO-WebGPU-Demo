@@ -8,9 +8,9 @@ LIBS_DIR="${PROCESS_DIR}/libs"
 rm -rf ${LIBS_DIR}
 mkdir -p ${LIBS_DIR}
 
-AO_IMAGE="p3rmaw3b/ao:0.1.2"
+AO_IMAGE="p3rmaw3b/ao:0.1.3"
 
-EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
+EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -I/lua-5.3.4/src -DSQLITE_ENABLE_MATH_FUNCTIONS -DSQLITE_ENABLE_GEOPOLY -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_API_ARMOR"
 
 # Build sqlite3 into a library with emscripten
 docker run -v ${SQLLITE_DIR}:/sqlite3 ${AO_IMAGE} sh -c \

@@ -5,7 +5,7 @@
     "main": "index.js",
     "license": "MIT",
     "dependencies": {
-        "@permaweb/ao-loader": "^0.0.35"
+        "@permaweb/ao-loader": "^0.0.40"
       },
     "scripts": {
       "test": "node --test --experimental-wasm-memory64 sql.test.js"
