@@ -22,7 +22,7 @@ void ObtainedWebGpuDevice(WGpuDevice result, void *userData);
 WGPU_BOOL raf(double time, void *userData);
 EM_BOOL window_resize(int eventType, const EmscriptenUiEvent *uiEvent, void *userData);
 
-int run_demo() // runs in main thread
+void run_demo() // runs in main thread
 {
   // To render to an existing HTML Canvas element from a Wasm Worker using WebGPU:
 
@@ -153,9 +153,9 @@ EM_BOOL window_resize(int eventType, const EmscriptenUiEvent *uiEvent, void *use
 }
 
 
-static int run_demo(lua_State *L)
+static int demo(lua_State *L)
 {
-    run_demo()
+    run_demo();
 
     lua_pushnumber(L, 0);
 
@@ -165,7 +165,7 @@ static int run_demo(lua_State *L)
 
 // Library registration function
 static const struct luaL_Reg lwebgpu_demo_funcs[] = {
-    {"run_demo", run_demo},
+    {"demo", demo},
     {NULL, NULL} /* Sentinel */
 };
 
