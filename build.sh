@@ -10,8 +10,8 @@ mkdir -p ${LIBS_DIR}
 
 AO_IMAGE="p3rmaw3b/ao:0.1.3"
 
-EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1"
-EMXX_CFLAGS_LUA="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
+EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1"
+EMXX_CFLAGS_LUA="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
 
 # Build wasm_webgpu into a library with emscripten
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \

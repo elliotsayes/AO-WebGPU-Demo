@@ -1,2 +1,3 @@
 extra_compile_args: [
+    'USE_WEBGPU=1'
   ]
