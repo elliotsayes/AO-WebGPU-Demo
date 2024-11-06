@@ -1,9 +1,9 @@
 node_modules
 .cache/
 
-sqlite3/*.a
-sqlite3/*.o
-sqlite3/*.so
+wasm_webgpu/*.a
+wasm_webgpu/*.o
+wasm_webgpu/*.so
 aos/process/libs
 
 **/*.so

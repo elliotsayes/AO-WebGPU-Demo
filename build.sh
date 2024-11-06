@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-SQLLITE_DIR="${SCRIPT_DIR}/sqlite3"
+WEBGPU_DIR="${SCRIPT_DIR}/wasm_webgpu"
 PROCESS_DIR="${SCRIPT_DIR}/aos/process"
 LIBS_DIR="${PROCESS_DIR}/libs"
 
@@ -10,24 +10,28 @@ mkdir -p ${LIBS_DIR}
 
 AO_IMAGE="p3rmaw3b/ao:0.1.3"
 
-EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -I/lua-5.3.4/src -DSQLITE_ENABLE_MATH_FUNCTIONS -DSQLITE_ENABLE_GEOPOLY -DSQLITE_ENABLE_FTS5 -DSQLITE_ENABLE_API_ARMOR"
+EMXX_CFLAGS="-s MEMORY64=1"
 
-# Build sqlite3 into a library with emscripten
-docker run -v ${SQLLITE_DIR}:/sqlite3 ${AO_IMAGE} sh -c \
-		"cd /sqlite3 && emcc -s -c sqlite3.c -o sqlite3.o ${EMXX_CFLAGS} && emar r sqlite3.a sqlite3.o && rm sqlite3.o"
+# Build wasm_webgpu into a library with emscripten
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c lib_webgpu.cpp -o lib_webgpu.o ${EMXX_CFLAGS} && emar r lib_webgpu.a lib_webgpu.o && rm lib_webgpu.o"
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c lib_webgpu_cpp20.cpp -o lib_webgpu_cpp20.o ${EMXX_CFLAGS} && emar r lib_webgpu_cpp20.a lib_webgpu_cpp20.o && rm lib_webgpu_cpp20.o"
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c lib_webgpu_dawn.cpp -o lib_webgpu_dawn.o ${EMXX_CFLAGS} && emar r lib_webgpu_dawn.a lib_webgpu_dawn.o && rm lib_webgpu_dawn.o"
 
-# Build lsqlite3 into a library with emscripten
-docker run -v ${SQLLITE_DIR}:/sqlite3 ${AO_IMAGE} sh -c \
-		"cd /sqlite3 && emcc -s -c lsqlite3.c -o lsqlite3.o ${EMXX_CFLAGS} && emar rcs lsqlite3.a lsqlite3.o && rm lsqlite3.o"
+# Build lwebgpu_demo into a library with emscripten
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c lwebgpu_demo.c -o lwebgpu_demo.o ${EMXX_CFLAGS} && emar rcs lwebgpu_demo.a lwebgpu_demo.o && rm lwebgpu_demo.o"
 
 # Fix permissions
-sudo chmod -R 777 ${SQLLITE_DIR}
-
+sudo chmod -R 777 ${WEBGPU_DIR}
 
 # # Copy luagraphqlparser to the libs directory
-cp ${SQLLITE_DIR}/sqlite3.a $LIBS_DIR/sqlite3.a
-cp ${SQLLITE_DIR}/lsqlite3.a $LIBS_DIR/lsqlite3.a
-
+cp ${WEBGPU_DIR}/lib_webgpu.a $LIBS_DIR/lib_webgpu.a
+cp ${WEBGPU_DIR}/lib_webgpu_cpp20.a $LIBS_DIR/lib_webgpu_cpp20.a
+cp ${WEBGPU_DIR}/lib_webgpu_dawn.a $LIBS_DIR/lib_webgpu_dawn.a
+cp ${WEBGPU_DIR}/lwebgpu_demo.a $LIBS_DIR/lwebgpu_demo.a
 
 # Copy config.yml to the process directory
 cp ${SCRIPT_DIR}/config.yml ${PROCESS_DIR}/config.yml
