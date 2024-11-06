@@ -10,7 +10,8 @@ mkdir -p ${LIBS_DIR}
 
 AO_IMAGE="p3rmaw3b/ao:0.1.3"
 
-EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
+EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1"
+EMXX_CFLAGS_LUA="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
 
 # Build wasm_webgpu into a library with emscripten
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
@@ -19,10 +20,12 @@ docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 		"cd /wasm_webgpu && emcc -s -c lib_webgpu_cpp20.cpp -o lib_webgpu_cpp20.o ${EMXX_CFLAGS} && emar r lib_webgpu_cpp20.a lib_webgpu_cpp20.o && rm lib_webgpu_cpp20.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 		"cd /wasm_webgpu && emcc -s -c lib_webgpu_dawn.cpp -o lib_webgpu_dawn.o ${EMXX_CFLAGS} && emar r lib_webgpu_dawn.a lib_webgpu_dawn.o && rm lib_webgpu_dawn.o"
-
-# Build lwebgpu_demo into a library with emscripten
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c lwebgpu_demo.c -o lwebgpu_demo.o ${EMXX_CFLAGS} && emar rcs lwebgpu_demo.a lwebgpu_demo.o && rm lwebgpu_demo.o"
+		"cd /wasm_webgpu && emcc -s -c sokol_gfx.h -o sokol_gfx.o ${EMXX_CFLAGS} && emar r sokol_gfx.a sokol_gfx.o && rm sokol_gfx.o"
+
+# Build lsokol_demo into a library with emscripten
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c lsokol_demo.c -o lsokol_demo.o ${EMXX_CFLAGS_LUA} && emar rcs lsokol_demo.a lsokol_demo.o && rm lsokol_demo.o"
 
 # Fix permissions
 sudo chmod -R 777 ${WEBGPU_DIR}
@@ -31,7 +34,8 @@ sudo chmod -R 777 ${WEBGPU_DIR}
 cp ${WEBGPU_DIR}/lib_webgpu.a $LIBS_DIR/lib_webgpu.a
 cp ${WEBGPU_DIR}/lib_webgpu_cpp20.a $LIBS_DIR/lib_webgpu_cpp20.a
 cp ${WEBGPU_DIR}/lib_webgpu_dawn.a $LIBS_DIR/lib_webgpu_dawn.a
-cp ${WEBGPU_DIR}/lwebgpu_demo.a $LIBS_DIR/lwebgpu_demo.a
+cp ${WEBGPU_DIR}/sokol_gfx.a $LIBS_DIR/sokol_gfx.a
+cp ${WEBGPU_DIR}/lsokol_demo.a $LIBS_DIR/lsokol_demo.a
 
 # Copy config.yml to the process directory
 cp ${SCRIPT_DIR}/config.yml ${PROCESS_DIR}/config.yml

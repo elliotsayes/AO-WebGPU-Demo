@@ -14,12 +14,14 @@ describe('sqlite', async () => {
 
         // load handler
         const result = await handle(Memory, getEval(`
+            local sokol_demo = require('lsokol_demo')
             return 'YAY'
             `), getEnv());
         Memory = result.Memory;
-
-        console.log(result.Output.data)
-        console.log(result.GasUsed)
+        
+        console.log(result)
+        // console.log(result.Output.data)
+        // console.log(result.GasUsed)
 
         assert.ok(true)
     });
