@@ -23,9 +23,9 @@ docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 		"cd /wasm_webgpu && emcc -s -c sokol_gfx.h -o sokol_gfx.o ${EMXX_CFLAGS} && emar r sokol_gfx.a sokol_gfx.o && rm sokol_gfx.o"
 
-# Build lsokol_demo into a library with emscripten
+# Build lsokoldemo into a library with emscripten
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c lsokol_demo.c -o lsokol_demo.o ${EMXX_CFLAGS_LUA} && emar rcs lsokol_demo.a lsokol_demo.o && rm lsokol_demo.o"
+		"cd /wasm_webgpu && emcc -s -c lsokoldemo.c -o lsokoldemo.o ${EMXX_CFLAGS_LUA} && emar rcs lsokoldemo.a lsokoldemo.o && rm lsokoldemo.o"
 
 # Fix permissions
 sudo chmod -R 777 ${WEBGPU_DIR}
@@ -35,7 +35,7 @@ cp ${WEBGPU_DIR}/lib_webgpu.a $LIBS_DIR/lib_webgpu.a
 cp ${WEBGPU_DIR}/lib_webgpu_cpp20.a $LIBS_DIR/lib_webgpu_cpp20.a
 cp ${WEBGPU_DIR}/lib_webgpu_dawn.a $LIBS_DIR/lib_webgpu_dawn.a
 cp ${WEBGPU_DIR}/sokol_gfx.a $LIBS_DIR/sokol_gfx.a
-cp ${WEBGPU_DIR}/lsokol_demo.a $LIBS_DIR/lsokol_demo.a
+cp ${WEBGPU_DIR}/lsokoldemo.a $LIBS_DIR/lsokoldemo.a
 
 # Copy config.yml to the process directory
 cp ${SCRIPT_DIR}/config.yml ${PROCESS_DIR}/config.yml

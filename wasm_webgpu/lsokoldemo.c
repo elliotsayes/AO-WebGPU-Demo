@@ -28,14 +28,14 @@ static int demo(lua_State *L)
 
 
 // Library registration function
-static const struct luaL_Reg lsokol_demo_funcs[] = {
+static const struct luaL_Reg lsokoldemo_funcs[] = {
     {"demo", demo},
     {NULL, NULL} /* Sentinel */
 };
 
 // Initialization function
-int luaopen_lsokol_demo(lua_State *L)
+int luaopen_lsokoldemo(lua_State *L)
 {
-    luaL_newlib(L, lsokol_demo_funcs);
+    luaL_newlib(L, lsokoldemo_funcs);
     return 1;
 }

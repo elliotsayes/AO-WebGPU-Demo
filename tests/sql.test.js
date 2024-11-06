@@ -14,8 +14,9 @@ describe('sqlite', async () => {
 
         // load handler
         const result = await handle(Memory, getEval(`
-            local sokol_demo = require('lsokol_demo')
-            return 'YAY'
+            local sokoldemo = require('lsokoldemo')
+            local s = sokoldemo.demo()
+            return s
             `), getEnv());
         Memory = result.Memory;
         
