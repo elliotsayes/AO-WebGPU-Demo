@@ -31,7 +31,7 @@ describe('sqlite', async () => {
         
         const hexString = result.Output.data
         const binaryData = Buffer.from(hexString, 'hex')
-        console.log(`Hex: ${hexString}, Binary: ${binaryData.length}`)
+        console.log(`Hex: ${hexString.length}, Binary: ${binaryData.length}`)
         // trim to 13363
         fs.writeFileSync('out.png', binaryData, {
             encoding: 'binary'

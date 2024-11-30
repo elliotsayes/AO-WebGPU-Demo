@@ -267,7 +267,7 @@ fn fs_main() -> @location(0) vec4f {
 	queue.submit(command);
 	command.release();
 
-	emscripten_sleep(1000);
+	emscripten_sleep(0);
 
 	// Instead of swapChain.present()
 	unsigned char * png = encodeTexturePng(device, targetTexture);

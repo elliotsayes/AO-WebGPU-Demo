@@ -227,7 +227,7 @@ unsigned char * FileRenderer::render(wgpu::Texture texture) const {
 // 		device.tick();
 // #endif
 // 	}
-	emscripten_sleep(1000);
+	emscripten_sleep(0);
 
 	queue.release();
 
