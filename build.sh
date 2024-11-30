@@ -1,4 +1,6 @@
 #!/bin/bash
+set -e
+
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 WEBGPU_DIR="${SCRIPT_DIR}/wasm_webgpu"
