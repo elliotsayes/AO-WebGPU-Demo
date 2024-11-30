@@ -1,3 +1,4 @@
 extra_compile_args: [
-    'USE_WEBGPU=1'
+    '-s', 'USE_WEBGPU=1'
   ]
+keep_js: true

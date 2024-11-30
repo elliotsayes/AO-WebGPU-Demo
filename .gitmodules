@@ -1,3 +1,6 @@
 [submodule "aos"]
 	path = aos
 	url = https://github.com/permaweb/aos.git
+[submodule "ao"]
+	path = ao
+	url = https://github.com/permaweb/ao

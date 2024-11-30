@@ -1,12 +1,14 @@
-
-
 import { describe, it } from 'node:test'
 import * as assert from 'node:assert'
 import AoLoader from '@permaweb/ao-loader'
 import fs from 'fs'
+import gpu from '@kmamal/gpu'
+const instance = gpu.create([ 'verbose=1' ])
+const adapter = await instance.requestAdapter()
+const device = await adapter.requestDevice()
 
 const wasm = fs.readFileSync('./process.wasm')
-const options = { format: "wasm64-unknown-emscripten-draft_2024_02_15", applyMetering: true }
+const options = { format: "wasm64-unknown-emscripten-draft_2024_11_30-webgpu", applyMetering: true, preinitializedWebGPUDevice: device }
 describe('sqlite', async () => {
     const handle = await AoLoader(wasm, options)
     let Memory = null;
@@ -25,6 +27,9 @@ describe('sqlite', async () => {
         // console.log(result.GasUsed)
 
         assert.ok(true)
+
+        await device.queue.onSubmittedWorkDone()
+        device.destroy()
     });
 });
 
