@@ -18,7 +18,8 @@ describe('sqlite', async () => {
         const result = await handle(Memory, getEval(`
             local sokoldemo = require('lsokoldemo')
             local s = sokoldemo.demo()
-            return s
+            local Hex = require(".crypto.util.hex")
+            return Hex.stringToHex(s)
             `), getEnv());
         Memory = result.Memory;
         
@@ -27,6 +28,14 @@ describe('sqlite', async () => {
         // console.log(result.GasUsed)
 
         assert.ok(true)
+        
+        const hexString = result.Output.data
+        const binaryData = Buffer.from(hexString, 'hex')
+        console.log(`Hex: ${hexString}, Binary: ${binaryData.length}`)
+        // trim to 13363
+        fs.writeFileSync('out.png', binaryData, {
+            encoding: 'binary'
+        })
 
         await device.queue.onSubmittedWorkDone()
         device.destroy()

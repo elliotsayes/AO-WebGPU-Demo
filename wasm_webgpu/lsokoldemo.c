@@ -6,19 +6,15 @@
 
 #include "hellotriangle.h"
 
+int len = 13363;
+
 static int demo(lua_State *L)
 {
-    // String
-    char demo[32] = "";
-
     // Call the function
-    int res = run_hello_triangle();
-
-    // Put number in the string
-    sprintf(demo, "%d", res);
+    unsigned char * png = run_hello_triangle();
 
     // lua_pushnumber(L, 0);
-    lua_pushstring(L, demo);
+    lua_pushlstring(L, png, len);
 
     return 1;
 }

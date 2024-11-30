@@ -27,6 +27,10 @@ EMXX_CFLAGS_LUA="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/s
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 		"cd /wasm_webgpu && emcc -s -c webgpuwrapper.hpp -o webgpuwrapper.o ${EMXX_CFLAGS} && emar r webgpuwrapper.a webgpuwrapper.o && rm webgpuwrapper.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c stbimagewrite.h -o stbimagewrite.o ${EMXX_CFLAGS} && emar r stbimagewrite.a stbimagewrite.o && rm stbimagewrite.o"
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -s -c encodetexture.hpp -o encodetexture.o ${EMXX_CFLAGS} && emar r encodetexture.a encodetexture.o && rm encodetexture.o"
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 		"cd /wasm_webgpu && emcc -s -c hellotriangle.cpp -o hellotriangle.o ${EMXX_CFLAGS} && emar r hellotriangle.a hellotriangle.o && rm hellotriangle.o"
 
 # Build lsokoldemo into a library with emscripten
@@ -42,6 +46,7 @@ sudo chmod -R 777 ${WEBGPU_DIR}
 # cp ${WEBGPU_DIR}/lib_webgpu_dawn.a $LIBS_DIR/lib_webgpu_dawn.a
 # cp ${WEBGPU_DIR}/sokol_gfx.a $LIBS_DIR/sokol_gfx.a
 cp ${WEBGPU_DIR}/webgpuwrapper.a $LIBS_DIR/webgpuwrapper.a
+cp ${WEBGPU_DIR}/stbimagewrite.a $LIBS_DIR/stbimagewrite.a
 cp ${WEBGPU_DIR}/hellotriangle.a $LIBS_DIR/hellotriangle.a
 cp ${WEBGPU_DIR}/lsokoldemo.a $LIBS_DIR/lsokoldemo.a
 
@@ -62,6 +67,6 @@ npm run format-file src/formats/wasm64-emscripten-webgpu.cjs
 npm run patch:webgpu
 npm run build
 
-# # Cleanup files in the aos process directory
-# rm ${PROCESS_DIR}/config.yml
-# rm ${PROCESS_DIR}/libs/*
+# Cleanup files in the aos process directory
+rm ${PROCESS_DIR}/config.yml
+rm ${PROCESS_DIR}/libs/*

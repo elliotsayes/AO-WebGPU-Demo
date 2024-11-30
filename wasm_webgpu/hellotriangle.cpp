@@ -31,14 +31,14 @@
 #define WEBGPU_CPP_IMPLEMENTATION
 #include "webgpuwrapper.hpp"
 
-// #include "save_image.h"
+#include "encodetexture.hpp"
 
 #include <iostream>
 #include <cassert>
 
 using namespace wgpu;
 
-int hello_triangle() {
+unsigned char * hello_triangle() {
   Instance instance = wgpuCreateInstance(NULL);
   Device device = emscripten_webgpu_get_device();
   Queue queue = wgpuDeviceGetQueue(device);
@@ -223,56 +223,55 @@ fn fs_main() -> @location(0) vec4f {
 	RenderPipeline pipeline = device.createRenderPipeline(pipelineDesc);
 	std::cout << "Render pipeline: " << pipeline << std::endl;
 
-	{ // Mock main "loop"
-
-		// Instead of swapChain.getCurrentTextureView()
-		TextureView nextTexture = targetTextureView;
-		if (!nextTexture) {
-			std::cerr << "Cannot acquire next swap chain texture" << std::endl;
-			return 1;
-		}
-
-		CommandEncoderDescriptor commandEncoderDesc;
-		commandEncoderDesc.label = "Command Encoder";
-		CommandEncoder encoder = device.createCommandEncoder(commandEncoderDesc);
-		
-		RenderPassDescriptor renderPassDesc;
-
-		RenderPassColorAttachment renderPassColorAttachment;
-		renderPassColorAttachment.view = nextTexture;
-		renderPassColorAttachment.resolveTarget = nullptr;
-		renderPassColorAttachment.loadOp = LoadOp::Clear;
-		renderPassColorAttachment.storeOp = StoreOp::Store;
-		renderPassColorAttachment.clearValue = Color{ 0.9, 0.1, 0.2, 1.0 };
-		renderPassDesc.colorAttachmentCount = 1;
-		renderPassDesc.colorAttachments = &renderPassColorAttachment;
-
-		renderPassDesc.depthStencilAttachment = nullptr;
-		renderPassDesc.timestampWrites = nullptr;
-		RenderPassEncoder renderPass = encoder.beginRenderPass(renderPassDesc);
-
-		// In its overall outline, drawing a triangle is as simple as this:
-		// Select which render pipeline to use
-		renderPass.setPipeline(pipeline);
-		// Draw 1 instance of a 3-vertices shape
-		renderPass.draw(3, 1, 0, 0);
-
-		renderPass.end();
-		renderPass.release();
-		
-		nextTexture.release();
-
-		CommandBufferDescriptor cmdBufferDescriptor;
-		cmdBufferDescriptor.label = "Command buffer";
-		CommandBuffer command = encoder.finish(cmdBufferDescriptor);
-		encoder.release();
-		queue.submit(command);
-		command.release();
-
-		// Instead of swapChain.present()
-		// saveTexture("output.png", device, targetTexture);
-		//saveTextureView("output.png", device, nextTexture, targetTexture.getWidth(), targetTexture.getHeight());
+	// Instead of swapChain.getCurrentTextureView()
+	TextureView nextTexture = targetTextureView;
+	if (!nextTexture) {
+		std::cerr << "Cannot acquire next swap chain texture" << std::endl;
+		return nullptr;
 	}
+
+	CommandEncoderDescriptor commandEncoderDesc;
+	commandEncoderDesc.label = "Command Encoder";
+	CommandEncoder encoder = device.createCommandEncoder(commandEncoderDesc);
+	
+	RenderPassDescriptor renderPassDesc;
+
+	RenderPassColorAttachment renderPassColorAttachment;
+	renderPassColorAttachment.view = nextTexture;
+	renderPassColorAttachment.resolveTarget = nullptr;
+	renderPassColorAttachment.loadOp = LoadOp::Clear;
+	renderPassColorAttachment.storeOp = StoreOp::Store;
+	renderPassColorAttachment.clearValue = Color{ 0.9, 0.1, 0.2, 1.0 };
+	renderPassDesc.colorAttachmentCount = 1;
+	renderPassDesc.colorAttachments = &renderPassColorAttachment;
+
+	renderPassDesc.depthStencilAttachment = nullptr;
+	renderPassDesc.timestampWrites = nullptr;
+	RenderPassEncoder renderPass = encoder.beginRenderPass(renderPassDesc);
+
+	// In its overall outline, drawing a triangle is as simple as this:
+	// Select which render pipeline to use
+	renderPass.setPipeline(pipeline);
+	// Draw 1 instance of a 3-vertices shape
+	renderPass.draw(3, 1, 0, 0);
+
+	renderPass.end();
+	renderPass.release();
+	
+	nextTexture.release();
+
+	CommandBufferDescriptor cmdBufferDescriptor;
+	cmdBufferDescriptor.label = "Command buffer";
+	CommandBuffer command = encoder.finish(cmdBufferDescriptor);
+	encoder.release();
+	queue.submit(command);
+	command.release();
+
+	emscripten_sleep(1000);
+
+	// Instead of swapChain.present()
+	unsigned char * png = encodeTexturePng(device, targetTexture);
+	//saveTextureView("output.png", device, nextTexture, targetTexture.getWidth(), targetTexture.getHeight());
 
 	// pipeline.release();
 	// shaderModule.release();
@@ -280,12 +279,12 @@ fn fs_main() -> @location(0) vec4f {
 	// instance.release();
 	// surface.release();
 
-	return 0;
+	return png;
 }
 
 
 // extern c function
-extern "C" int run_hello_triangle()
+extern "C" unsigned char * run_hello_triangle()
 {
   return hello_triangle();
 }

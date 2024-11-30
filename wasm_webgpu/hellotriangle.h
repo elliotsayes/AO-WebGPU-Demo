@@ -1,1 +1,1 @@
-int run_hello_triangle();
+unsigned char * run_hello_triangle();
