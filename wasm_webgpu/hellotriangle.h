@@ -1,0 +1,1 @@
+int run_hello_triangle();
