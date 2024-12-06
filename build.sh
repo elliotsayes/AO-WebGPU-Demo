@@ -26,17 +26,17 @@ EMXX_CFLAGS_LUA="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I
 # docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 # 		"cd /wasm_webgpu && emcc -s -c sokol_gfx.h -o sokol_gfx.o ${EMXX_CFLAGS} && emar r sokol_gfx.a sokol_gfx.o && rm sokol_gfx.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c webgpuwrapper.hpp -o webgpuwrapper.o ${EMXX_CFLAGS} && emar r webgpuwrapper.a webgpuwrapper.o && rm webgpuwrapper.o"
+		"cd /wasm_webgpu && emcc -c webgpuwrapper.hpp -o webgpuwrapper.o ${EMXX_CFLAGS} && emar r webgpuwrapper.a webgpuwrapper.o && rm webgpuwrapper.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c stbimagewrite.h -o stbimagewrite.o ${EMXX_CFLAGS} && emar r stbimagewrite.a stbimagewrite.o && rm stbimagewrite.o"
+		"cd /wasm_webgpu && emcc -c stbimagewrite.h -o stbimagewrite.o ${EMXX_CFLAGS} && emar r stbimagewrite.a stbimagewrite.o && rm stbimagewrite.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c encodetexture.hpp -o encodetexture.o ${EMXX_CFLAGS} && emar r encodetexture.a encodetexture.o && rm encodetexture.o"
+		"cd /wasm_webgpu && emcc -c encodetexture.hpp -o encodetexture.o ${EMXX_CFLAGS} && emar r encodetexture.a encodetexture.o && rm encodetexture.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c hellotriangle.cpp -o hellotriangle.o ${EMXX_CFLAGS} && emar r hellotriangle.a hellotriangle.o && rm hellotriangle.o"
+		"cd /wasm_webgpu && emcc -c hellotriangle.cpp -o hellotriangle.o ${EMXX_CFLAGS} && emar r hellotriangle.a hellotriangle.o && rm hellotriangle.o"
 
 # Build lsokoldemo into a library with emscripten
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -s -c lsokoldemo.c -o lsokoldemo.o ${EMXX_CFLAGS_LUA} && emar rcs lsokoldemo.a lsokoldemo.o && rm lsokoldemo.o"
+		"cd /wasm_webgpu && emcc -c lsokoldemo.c -o lsokoldemo.o ${EMXX_CFLAGS_LUA} && emar rcs lsokoldemo.a lsokoldemo.o && rm lsokoldemo.o"
 
 # Fix permissions
 sudo chmod -R 777 ${WEBGPU_DIR}
