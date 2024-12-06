@@ -8,8 +8,8 @@ ROOT_DIR=$(pwd)
 # cd $ROOT_DIR
 
 # copy over the patched emscripten WebGPU library file
-mkdir -p ao/dev-cli/container/src/emscripten/src
-cp emscripten/src/library_webgpu.js ao/dev-cli/container/src/emscripten/src/library_webgpu.js
+mkdir -p ao/dev-cli/container/src/emscripten
+cp -r emscripten/src ao/dev-cli/container/src/emscripten
 
 cd ao/dev-cli/container
 ./build.sh
