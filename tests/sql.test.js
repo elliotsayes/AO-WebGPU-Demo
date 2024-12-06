@@ -8,7 +8,7 @@ const adapter = await instance.requestAdapter()
 const device = await adapter.requestDevice()
 
 const wasm = fs.readFileSync('./process.wasm')
-const options = { format: "wasm64-unknown-emscripten-draft_2024_11_30-webgpu", applyMetering: true, preinitializedWebGPUDevice: device }
+const options = { format: "wasm32-unknown-emscripten-webgpu-draft_2024_11_30", applyMetering: true, preinitializedWebGPUDevice: device }
 describe('sqlite', async () => {
     const handle = await AoLoader(wasm, options)
     let Memory = null;

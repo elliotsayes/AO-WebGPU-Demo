@@ -1,3 +1,4 @@
+target: 32
 extra_compile_args: [
     '-s', 'USE_WEBGPU=1'
   ]

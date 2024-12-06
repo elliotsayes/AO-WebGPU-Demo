@@ -9,6 +9,6 @@
         "@permaweb/ao-loader": "file:../ao/loader"
     },
     "scripts": {
-        "test": "node --test --experimental-wasm-memory64 sql.test.js"
+        "test": "node --test sql.test.js"
     }
 }

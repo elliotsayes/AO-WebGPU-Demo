@@ -10,10 +10,11 @@ LIBS_DIR="${PROCESS_DIR}/libs"
 rm -rf ${LIBS_DIR}
 mkdir -p ${LIBS_DIR}
 
-AO_IMAGE="p3rmaw3b/ao:0.1.3"
+# AO_IMAGE="p3rmaw3b/ao:0.1.3"
+AO_IMAGE="p3rmaw3b/ao:webgpu-sync"
 
-EMXX_CFLAGS="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1"
-EMXX_CFLAGS_LUA="-s MEMORY64=1 -s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
+EMXX_CFLAGS="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1"
+EMXX_CFLAGS_LUA="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
 
 # Build wasm_webgpu into a library with emscripten
 # docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
@@ -61,12 +62,14 @@ docker run -e DEBUG=1 --platform linux/amd64 -v ./:/src ${AO_IMAGE} ao-build-mod
 cp ${PROCESS_DIR}/process.wasm ${SCRIPT_DIR}/tests/process.wasm
 
 # Setup the glue js
-cp ${PROCESS_DIR}/process.js ${SCRIPT_DIR}/ao/loader/src/formats/wasm64-emscripten-webgpu.cjs
+cp ${PROCESS_DIR}/process.js ${SCRIPT_DIR}/ao/loader/src/formats/emscripten-webgpu-sync.cjs
 cd ${SCRIPT_DIR}/ao/loader
-npm run format-file src/formats/wasm64-emscripten-webgpu.cjs
+npm run format-file src/formats/emscripten-webgpu-sync.cjs
 npm run patch:webgpu
 npm run build
 
 # Cleanup files in the aos process directory
 rm ${PROCESS_DIR}/config.yml
 rm ${PROCESS_DIR}/libs/*
+rm ${PROCESS_DIR}/process.wasm
+rm ${PROCESS_DIR}/process.js
