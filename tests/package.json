@@ -6,7 +6,8 @@
     "license": "MIT",
     "dependencies": {
         "@kmamal/gpu": "^0.1.3",
-        "@permaweb/ao-loader": "file:../ao/loader"
+        "@permaweb/ao-loader": "file:../ao/loader",
+        "wgsl-to-json": "^0.1.1"
     },
     "scripts": {
         "test": "node --test sql.test.js"

@@ -2,6 +2,7 @@ import { describe, it } from 'node:test'
 import * as assert from 'node:assert'
 import AoLoader from '@permaweb/ao-loader'
 import fs from 'fs'
+import { validateDataRaceWgsl } from './data-race-validator.js'
 import gpu from '@kmamal/gpu'
 const instance = gpu.create([ 'verbose=1' ])
 const adapter = await instance.requestAdapter()
@@ -13,6 +14,7 @@ const options = {
     applyMetering: true,
     preinitializedWebGPUDevice: device,
     // unsafe: true,
+    dataRaceValidator: validateDataRaceWgsl,
 }
 describe('sqlite', async () => {
     const handle = await AoLoader(wasm, options)

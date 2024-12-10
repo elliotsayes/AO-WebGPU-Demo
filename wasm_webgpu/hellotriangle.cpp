@@ -109,6 +109,15 @@ unsigned char * hello_triangle() {
 
 	std::cout << "Creating shader module..." << std::endl;
 	const char* shaderSource = R"(
+// The following code is a data race
+// @group(0) @binding(0) var<storage, read_write> result: array<u32>;
+
+// @compute @workgroup_size(2) fn computeSomething(
+//     @builtin(local_invocation_id) local_invocation_id : vec3<u32>,
+// ) {
+//   result[0] = local_invocation_id.x;
+// }
+
 @vertex
 fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) vec4<f32> {
 	var p = vec2f(0.0, 0.0);
