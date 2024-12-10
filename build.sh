@@ -11,7 +11,8 @@ rm -rf ${LIBS_DIR}
 mkdir -p ${LIBS_DIR}
 
 # AO_IMAGE="p3rmaw3b/ao:0.1.3"
-AO_IMAGE="p3rmaw3b/ao:webgpu-sync"
+AO_IMAGE="p3rmaw3b/ao:dev"
+AO_IMAGE_SYNC="p3rmaw3b/ao:webgpu-sync"
 
 EMXX_CFLAGS="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1"
 EMXX_CFLAGS_LUA="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
@@ -55,18 +56,22 @@ cp ${WEBGPU_DIR}/lsokoldemo.a $LIBS_DIR/lsokoldemo.a
 cp ${SCRIPT_DIR}/config.yml ${PROCESS_DIR}/config.yml
 
 # Build the process module
-cd ${PROCESS_DIR} 
+cd ${PROCESS_DIR}
+docker run -e DEBUG=1 --platform linux/amd64 -v ./:/src ${AO_IMAGE_SYNC} ao-build-module
+# Copy the sync glue js
+cp ${PROCESS_DIR}/process.js ${SCRIPT_DIR}/ao/loader/src/formats/emscripten-webgpu-sync.cjs
 docker run -e DEBUG=1 --platform linux/amd64 -v ./:/src ${AO_IMAGE} ao-build-module
+# Copy the unsafe glue js
+cp ${PROCESS_DIR}/process.js ${SCRIPT_DIR}/ao/loader/src/formats/emscripten-webgpu-unsafe.cjs
+
+cd ${SCRIPT_DIR}/ao/loader
+npm run format-file src/formats/emscripten-webgpu-sync.cjs
+npm run format-file src/formats/emscripten-webgpu-unsafe.cjs
+npm run patch:webgpu
+npm run build
 
 # Copy the process module to the tests directory
 cp ${PROCESS_DIR}/process.wasm ${SCRIPT_DIR}/tests/process.wasm
-
-# Setup the glue js
-cp ${PROCESS_DIR}/process.js ${SCRIPT_DIR}/ao/loader/src/formats/emscripten-webgpu-sync.cjs
-cd ${SCRIPT_DIR}/ao/loader
-npm run format-file src/formats/emscripten-webgpu-sync.cjs
-npm run patch:webgpu
-npm run build
 
 # Cleanup files in the aos process directory
 rm ${PROCESS_DIR}/config.yml

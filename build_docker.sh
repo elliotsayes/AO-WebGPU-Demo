@@ -1,4 +1,5 @@
 #!/bin/zsh
+set -e
 
 ROOT_DIR=$(pwd)
 

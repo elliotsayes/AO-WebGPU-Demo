@@ -8,7 +8,12 @@ const adapter = await instance.requestAdapter()
 const device = await adapter.requestDevice()
 
 const wasm = fs.readFileSync('./process.wasm')
-const options = { format: "wasm32-unknown-emscripten-webgpu-draft_2024_11_30", applyMetering: true, preinitializedWebGPUDevice: device }
+const options = {
+    format: "wasm32-unknown-emscripten-webgpu-draft_2024_11_30",
+    applyMetering: true,
+    preinitializedWebGPUDevice: device,
+    // unsafe: true,
+}
 describe('sqlite', async () => {
     const handle = await AoLoader(wasm, options)
     let Memory = null;
@@ -23,7 +28,7 @@ describe('sqlite', async () => {
             `), getEnv());
         Memory = result.Memory;
         
-        console.log(result)
+        // console.log(result)
         // console.log(result.Output.data)
         // console.log(result.GasUsed)
 
@@ -37,8 +42,8 @@ describe('sqlite', async () => {
             encoding: 'binary'
         })
 
-        await device.queue.onSubmittedWorkDone()
-        device.destroy()
+        // await device.queue.onSubmittedWorkDone()
+        // device.destroy()
     });
 });
 
