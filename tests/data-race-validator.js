@@ -16,10 +16,14 @@ export async function validateDataRaceWgsl(shaderSource) {
         reject(stderr)
       }
       const result = JSON.parse(stdout)
-      const areDrf = result.kernels
-        .map(k => k.status === 'drf')
-      console.log('DRF:', areDrf)
-      resolve(areDrf.reduce((a, b) => a && b, true))
+      const areDrf = Object.fromEntries(
+        result.kernels
+        .map(k => [k.kernel_name, k.status === 'drf'])
+      )
+      console.log("Kernel DRF status", areDrf)
+      const areAllDrf = Object.values(areDrf).every(v => v)
+      console.log("All Kernels Data-Race Free?", areAllDrf)
+      resolve(areAllDrf)
     })
   })
 }

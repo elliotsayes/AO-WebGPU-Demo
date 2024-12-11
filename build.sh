@@ -26,14 +26,14 @@ EMXX_CFLAGS_LUA="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I
 # 		"cd /wasm_webgpu && emcc -s -c lib_webgpu_dawn.cpp -o lib_webgpu_dawn.o ${EMXX_CFLAGS} && emar r lib_webgpu_dawn.a lib_webgpu_dawn.o && rm lib_webgpu_dawn.o"
 # docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 # 		"cd /wasm_webgpu && emcc -s -c sokol_gfx.h -o sokol_gfx.o ${EMXX_CFLAGS} && emar r sokol_gfx.a sokol_gfx.o && rm sokol_gfx.o"
+# docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+# 		"cd /wasm_webgpu && emcc -c webgpuwrapper.hpp -o webgpuwrapper.o ${EMXX_CFLAGS} && emar r webgpuwrapper.a webgpuwrapper.o && rm webgpuwrapper.o"
+# docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+# 		"cd /wasm_webgpu && emcc -c stbimagewrite.h -o stbimagewrite.o ${EMXX_CFLAGS} && emar r stbimagewrite.a stbimagewrite.o && rm stbimagewrite.o"
+# docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+# 		"cd /wasm_webgpu && emcc -c encodetexture.hpp -o encodetexture.o ${EMXX_CFLAGS} && emar r encodetexture.a encodetexture.o && rm encodetexture.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -c webgpuwrapper.hpp -o webgpuwrapper.o ${EMXX_CFLAGS} && emar r webgpuwrapper.a webgpuwrapper.o && rm webgpuwrapper.o"
-docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -c stbimagewrite.h -o stbimagewrite.o ${EMXX_CFLAGS} && emar r stbimagewrite.a stbimagewrite.o && rm stbimagewrite.o"
-docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -c encodetexture.hpp -o encodetexture.o ${EMXX_CFLAGS} && emar r encodetexture.a encodetexture.o && rm encodetexture.o"
-docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
-		"cd /wasm_webgpu && emcc -c hellotriangle.cpp -o hellotriangle.o ${EMXX_CFLAGS} && emar r hellotriangle.a hellotriangle.o && rm hellotriangle.o"
+		"cd /wasm_webgpu && emcc -c helloboat.cpp -o helloboat.o ${EMXX_CFLAGS} && emar r helloboat.a helloboat.o && rm helloboat.o"
 
 # Build lsokoldemo into a library with emscripten
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
@@ -47,9 +47,9 @@ sudo chmod -R 777 ${WEBGPU_DIR}
 # cp ${WEBGPU_DIR}/lib_webgpu_cpp20.a $LIBS_DIR/lib_webgpu_cpp20.a
 # cp ${WEBGPU_DIR}/lib_webgpu_dawn.a $LIBS_DIR/lib_webgpu_dawn.a
 # cp ${WEBGPU_DIR}/sokol_gfx.a $LIBS_DIR/sokol_gfx.a
-cp ${WEBGPU_DIR}/webgpuwrapper.a $LIBS_DIR/webgpuwrapper.a
-cp ${WEBGPU_DIR}/stbimagewrite.a $LIBS_DIR/stbimagewrite.a
-cp ${WEBGPU_DIR}/hellotriangle.a $LIBS_DIR/hellotriangle.a
+# cp ${WEBGPU_DIR}/webgpuwrapper.a $LIBS_DIR/webgpuwrapper.a
+# cp ${WEBGPU_DIR}/stbimagewrite.a $LIBS_DIR/stbimagewrite.a
+cp ${WEBGPU_DIR}/helloboat.a $LIBS_DIR/helloboat.a
 cp ${WEBGPU_DIR}/lsokoldemo.a $LIBS_DIR/lsokoldemo.a
 
 # Copy config.yml to the process directory

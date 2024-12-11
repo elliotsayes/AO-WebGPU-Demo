@@ -1,0 +1,1 @@
+unsigned char * run_hello_boat();

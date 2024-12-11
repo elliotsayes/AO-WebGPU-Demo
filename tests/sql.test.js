@@ -2,19 +2,26 @@ import { describe, it } from 'node:test'
 import * as assert from 'node:assert'
 import AoLoader from '@permaweb/ao-loader'
 import fs from 'fs'
+import WeaveDrive from "@permaweb/weavedrive"
+// import WeaveDrive from "./weavedrive.js"
 import { validateDataRaceWgsl } from './data-race-validator.js'
 import gpu from '@kmamal/gpu'
 const instance = gpu.create([ 'verbose=1' ])
 const adapter = await instance.requestAdapter()
 const device = await adapter.requestDevice()
 
+const env = getEnv();
 const wasm = fs.readFileSync('./process.wasm')
 const options = {
     format: "wasm32-unknown-emscripten-webgpu-draft_2024_11_30",
     applyMetering: true,
+    mode: "test",
+    ARWEAVE: "https://arweave.net",
+    WeaveDrive,
+    ...env,
     preinitializedWebGPUDevice: device,
-    // unsafe: true,
     dataRaceValidator: validateDataRaceWgsl,
+    // unsafe: true,
 }
 describe('sqlite', async () => {
     const handle = await AoLoader(wasm, options)
@@ -27,7 +34,7 @@ describe('sqlite', async () => {
             local s = sokoldemo.demo()
             local Hex = require(".crypto.util.hex")
             return Hex.stringToHex(s)
-            `), getEnv());
+            `), env);
         Memory = result.Memory;
         
         // console.log(result)
@@ -68,6 +75,12 @@ function getEval(expr) {
 
 function getEnv() {
     return {
+        Module: {
+            Tags: [{ name: "Extension", value: "Weave-Drive" }]
+        },
+        Spawn: {
+            Tags: [{ name: "Name", value: "TEST_SPAWN_OWNER" }],
+        },
         Process: {
             Id: "AOS",
             Owner: "FOOBAR",

@@ -4,14 +4,14 @@
 #include "lualib.h"
 #include "lauxlib.h"
 
-#include "hellotriangle.h"
+#include "helloboat.h"
 
-int len = 13363;
+int len = 94410;
 
 static int demo(lua_State *L)
 {
     // Call the function
-    unsigned char * png = run_hello_triangle();
+    unsigned char * png = run_hello_boat();
 
     // lua_pushnumber(L, 0);
     lua_pushlstring(L, png, len);
