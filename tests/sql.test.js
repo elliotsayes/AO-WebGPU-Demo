@@ -27,12 +27,12 @@ describe('sqlite', async () => {
     it('Create DB', {
         timeout: 1000 * 60 * 10,
     }, async () => {
+        let device = await adapter.requestDevice()
         for (let i = 0; i < 100; i++) {
             console.log("=====================================")
             console.log(`Iteration: ${i}`)
             console.log("=====================================")
 
-            const device = await adapter.requestDevice()
             const opts = {
                 preinitializedWebGPUDevice: device,
                 outputMemory: false,
@@ -58,19 +58,21 @@ describe('sqlite', async () => {
             const hexString = result.Output.data
             const binaryData = Buffer.from(hexString, 'hex')
             console.log(`Hex: ${hexString.length}, Binary: ${binaryData.length}`)
-            // trim to 13363
             fs.writeFileSync(`output/frame_${i}.png`, binaryData, {
                 encoding: 'binary'
             })
 
-            try {
-                device.destroy()
-            } catch (e) {
-                console.error(e)
+            if (!options.unsafe) {
+                // Recreate the device for safety
+                try {
+                    device.destroy()
+                } catch (e) {
+                    console.error(e)
+                }
+                // Recreating devices too quickly can cause a crash
+                await new Promise((resolve) => setTimeout(resolve, 1000))
+                device = await adapter.requestDevice()
             }
-
-            // Recreating devices too quickly can cause a crash
-            await new Promise((resolve) => setTimeout(resolve, 1000))
         }
     });
 });
