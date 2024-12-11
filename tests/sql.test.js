@@ -8,7 +8,6 @@ import { validateDataRaceWgsl } from './data-race-validator.js'
 import gpu from '@kmamal/gpu'
 const instance = gpu.create([ 'verbose=1' ])
 const adapter = await instance.requestAdapter()
-const device = await adapter.requestDevice()
 
 const env = getEnv();
 const wasm = fs.readFileSync('./process.wasm')
@@ -19,40 +18,60 @@ const options = {
     ARWEAVE: "https://arweave.net",
     WeaveDrive,
     ...env,
-    preinitializedWebGPUDevice: device,
     dataRaceValidator: validateDataRaceWgsl,
     // unsafe: true,
 }
 describe('sqlite', async () => {
     const handle = await AoLoader(wasm, options)
     let Memory = null;
-    it('Create DB', async () => {
+    it('Create DB', {
+        timeout: 1000 * 60 * 10,
+    }, async () => {
+        for (let i = 0; i < 100; i++) {
+            console.log("=====================================")
+            console.log(`Iteration: ${i}`)
+            console.log("=====================================")
 
-        // load handler
-        const result = await handle(Memory, getEval(`
-            local sokoldemo = require('lsokoldemo')
-            local s = sokoldemo.demo()
-            local Hex = require(".crypto.util.hex")
-            return Hex.stringToHex(s)
-            `), env);
-        Memory = result.Memory;
-        
-        // console.log(result)
-        // console.log(result.Output.data)
-        // console.log(result.GasUsed)
+            const device = await adapter.requestDevice()
+            const opts = {
+                preinitializedWebGPUDevice: device,
+                outputMemory: false,
+            }
 
-        assert.ok(true)
-        
-        const hexString = result.Output.data
-        const binaryData = Buffer.from(hexString, 'hex')
-        console.log(`Hex: ${hexString.length}, Binary: ${binaryData.length}`)
-        // trim to 13363
-        fs.writeFileSync('out.png', binaryData, {
-            encoding: 'binary'
-        })
+            // load handler
+            const result = await handle(
+                Memory, 
+                getEval(`
+                local sokoldemo = require('lsokoldemo')
+                local s = sokoldemo.demo()
+                local Hex = require(".crypto.util.hex")
+                return Hex.stringToHex(s)
+                `),
+                env,
+                opts,
+            );
+            Memory = result.Memory;
+            console.log('Memory', Memory?.length);
 
-        // await device.queue.onSubmittedWorkDone()
-        // device.destroy()
+            // assert.ok(true)
+            
+            const hexString = result.Output.data
+            const binaryData = Buffer.from(hexString, 'hex')
+            console.log(`Hex: ${hexString.length}, Binary: ${binaryData.length}`)
+            // trim to 13363
+            fs.writeFileSync(`output/frame_${i}.png`, binaryData, {
+                encoding: 'binary'
+            })
+
+            try {
+                device.destroy()
+            } catch (e) {
+                console.error(e)
+            }
+
+            // Recreating devices too quickly can cause a crash
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+        }
     });
 });
 
