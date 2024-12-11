@@ -182,7 +182,9 @@ unsigned char *hello_boat()
 	// At least RenderAttachment usage is needed. Also add CopySrc to be able
 	// to retrieve the texture afterwards.
 	targetTextureDesc.usage = TextureUsage::RenderAttachment | TextureUsage::CopySrc;
-	targetTextureDesc.viewFormats = nullptr;
+	// High fidelity format
+	WGPUTextureFormat targetTextureFormat = WGPUTextureFormat_RGBA8Unorm;
+	targetTextureDesc.viewFormats = &targetTextureFormat;
 	targetTextureDesc.viewFormatCount = 0;
 	Texture targetTexture = device.createTexture(targetTextureDesc);
 
@@ -275,7 +277,8 @@ unsigned char *hello_boat()
 	DepthStencilState depthStencilState = Default;
 	depthStencilState.depthCompare = CompareFunction::Less;
 	depthStencilState.depthWriteEnabled = true;
-	TextureFormat depthTextureFormat = TextureFormat::Depth24Plus;
+	// High fidelity format
+	TextureFormat depthTextureFormat = TextureFormat::Depth32Float;
 	depthStencilState.format = depthTextureFormat;
 	depthStencilState.stencilReadMask = 0;
 	depthStencilState.stencilWriteMask = 0;
@@ -771,7 +774,8 @@ Texture createTextureFromPixelData(PixelData &pixelData, Device device, TextureV
 	textureDesc.sampleCount = 1;
 	textureDesc.usage = TextureUsage::TextureBinding | TextureUsage::CopyDst;
 	textureDesc.viewFormatCount = 0;
-	textureDesc.viewFormats = nullptr;
+	// High fidelity format
+	textureDesc.viewFormats = &textureDesc.format;
 	Texture texture = device.createTexture(textureDesc);
 
 	// Upload data to the GPU texture
