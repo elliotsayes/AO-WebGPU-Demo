@@ -231,6 +231,8 @@ unsigned char * FileRenderer::render(wgpu::Texture texture) const {
 
 	queue.release();
 
+	emscripten_sleep(0);
+
 	return png;
 }
 
@@ -294,12 +296,9 @@ unsigned char * encodeTexturePng(wgpu::Device device, wgpu::Texture texture) {
 	uint32_t width = texture.getWidth();
 	uint32_t height = texture.getHeight();
 
-	static std::unique_ptr<FileRenderer> renderer = nullptr;
-	if (!renderer) {
-		renderer = std::make_unique<FileRenderer>(device, width, height);
-	}
+	FileRenderer renderer = FileRenderer(device, width, height);
 
-	return renderer->render(texture);
+	return renderer.render(texture);
 }
 
 // bool saveTextureView(const std::filesystem::path path, wgpu::Device device, wgpu::TextureView textureView, uint32_t width, uint32_t height) {

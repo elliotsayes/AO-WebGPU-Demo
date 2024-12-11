@@ -43,9 +43,9 @@
 #include "stbimage.h"
 #include "stbimagewrite.h"
 
-#define RESOURCE_DIR "/data/"
-
 #include "encodetexture.hpp"
+
+#define RESOURCE_DIR "/data/"
 
 #include <iostream>
 #include <cassert>
@@ -93,9 +93,28 @@ struct VertexAttributes
 	vec2 uv;
 };
 
-ShaderModule loadShaderModule(const fs::path &path, Device device);
+struct PixelData
+{
+	uint32_t width;
+	uint32_t height;
+	uint32_t channels;
+	unsigned char *data;
+};
+
+bool loadShaderDesc(const fs::path &path, ShaderModuleWGSLDescriptor &shaderCodeDesc, ShaderModuleDescriptor &shaderDesc);
 bool loadGeometryFromObj(const fs::path &path, std::vector<VertexAttributes> &vertexData);
-Texture loadTexture(const fs::path &path, Device device, TextureView *pTextureView = nullptr);
+bool loadPixelData(const fs::path &path, PixelData &pixelData);
+Texture createTextureFromPixelData(PixelData &pixelData, Device device, TextureView *pTextureView = nullptr);
+
+// Global flag for whether the data has been loaded
+bool dataLoaded = false;
+
+// Globals for ShaderModule, PixelData, and ObjVertexes
+char shaderCode[2048];
+ShaderModuleWGSLDescriptor shaderCodeDesc;
+ShaderModuleDescriptor shaderDesc;
+PixelData *pixelData;
+std::vector<VertexAttributes> vertexData;
 
 unsigned char *hello_boat()
 {
@@ -103,70 +122,35 @@ unsigned char *hello_boat()
 	Device device = emscripten_webgpu_get_device();
 	Queue queue = wgpuDeviceGetQueue(device);
 
-	// Instance instance = createInstance(InstanceDescriptor{});
-	// if (!instance) {
-	// 	std::cerr << "Could not initialize WebGPU!" << std::endl;
-	// 	return 1;
-	// }
+	if (!dataLoaded)
+	{
+		bool success = false;
+		// Load the shader module
+		success = loadShaderDesc(RESOURCE_DIR "Ymx4yOfWqgbrmKJDuc2GuN7ZtzwhYs-B10EZlGobiMQ", shaderCodeDesc, shaderDesc);
+		if (!success)
+		{
+			std::cerr << "Could not load shader!" << std::endl;
+			return nullptr;
+		}
 
-	// if (!glfwInit()) {
-	// 	std::cerr << "Could not initialize GLFW!" << std::endl;
-	// 	return 1;
-	// }
+		success = loadPixelData(fs::path(RESOURCE_DIR) / "jBMq9Yuvc98E82j0ChOgtWGIHtEHpA66ZftmN_S2d8U", *pixelData);
+		if (!success)
+		{
+			std::cerr << "Could not load pixel data!" << std::endl;
+			return nullptr;
+		}
 
-	// glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	// glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	// GLFWwindow* window = glfwCreateWindow(640, 480, "Learn WebGPU", NULL, NULL);
-	// if (!window) {
-	// 	std::cerr << "Could not open window!" << std::endl;
-	// 	return 1;
-	// }
+		// Load the geometry
+		success = loadGeometryFromObj(RESOURCE_DIR "Di9PS_-XqIqaXbYKHmFST-ftqW5lHcmS0W6BO404I2s", vertexData);
+		if (!success)
+		{
+			std::cerr << "Could not load geometry!" << std::endl;
+			return nullptr;
+		}
+		std::cout << "Loaded " << vertexData.size() << " vertices" << std::endl;
 
-	// std::cout << "Requesting adapter..." << std::endl;
-	// Surface surface = glfwGetWGPUSurface(instance, window);
-	// RequestAdapterOptions adapterOpts{};
-	// adapterOpts.compatibleSurface = surface;
-	// Adapter adapter = instance.requestAdapter(adapterOpts);
-	// std::cout << "Got adapter: " << adapter << std::endl;
-
-	// SupportedLimits supportedLimits;
-	// adapter.getLimits(&supportedLimits);
-
-	// std::cout << "Requesting device..." << std::endl;
-	// RequiredLimits requiredLimits = Default;
-	// requiredLimits.limits.maxVertexAttributes = 4;
-	// requiredLimits.limits.maxVertexBuffers = 1;
-	// requiredLimits.limits.maxBufferSize = 150000 * sizeof(VertexAttributes);
-	// requiredLimits.limits.maxVertexBufferArrayStride = sizeof(VertexAttributes);
-	// requiredLimits.limits.minStorageBufferOffsetAlignment = supportedLimits.limits.minStorageBufferOffsetAlignment;
-	// requiredLimits.limits.minUniformBufferOffsetAlignment = supportedLimits.limits.minUniformBufferOffsetAlignment;
-	// requiredLimits.limits.maxInterStageShaderComponents = 8;
-	// requiredLimits.limits.maxBindGroups = 1;
-	// requiredLimits.limits.maxUniformBuffersPerShaderStage = 1;
-	// requiredLimits.limits.maxUniformBufferBindingSize = 16 * 4 * sizeof(float);
-	// // Allow textures up to 2K
-	// requiredLimits.limits.maxTextureDimension1D = 2048;
-	// requiredLimits.limits.maxTextureDimension2D = 2048;
-	// requiredLimits.limits.maxTextureArrayLayers = 1;
-	// requiredLimits.limits.maxSampledTexturesPerShaderStage = 1;
-	// requiredLimits.limits.maxSamplersPerShaderStage = 1;
-
-	// DeviceDescriptor deviceDesc;
-	// deviceDesc.label = "My Device";
-	// deviceDesc.requiredFeaturesCount = 0;
-	// deviceDesc.requiredLimits = &requiredLimits;
-	// deviceDesc.defaultQueue.label = "The default queue";
-	// Device device = adapter.requestDevice(deviceDesc);
-	// std::cout << "Got device: " << device << std::endl;
-
-	// // Add an error callback for more debug info
-	// auto h = device.setUncapturedErrorCallback([](ErrorType type, char const* message) {
-	// 	std::cout << "Device error: type " << type;
-	// 	if (message) std::cout << " (message: " << message << ")";
-	// 	std::cout << std::endl;
-	// });
-
-	// Queue queue = device.getQueue();
+		dataLoaded = true;
+	}
 
 	// std::cout << "Creating swapchain..." << std::endl;
 #ifdef WEBGPU_BACKEND_WGPU
@@ -216,7 +200,7 @@ unsigned char *hello_boat()
 	TextureView targetTextureView = targetTexture.createView(targetTextureViewDesc);
 
 	std::cout << "Creating shader module..." << std::endl;
-	ShaderModule shaderModule = loadShaderModule(RESOURCE_DIR "Ymx4yOfWqgbrmKJDuc2GuN7ZtzwhYs-B10EZlGobiMQ", device);
+	ShaderModule shaderModule = device.createShaderModule(shaderDesc);
 	emscripten_sleep(0);
 	std::cout << "Shader module: " << shaderModule << std::endl;
 
@@ -384,7 +368,8 @@ unsigned char *hello_boat()
 
 	// Create a texture
 	TextureView textureView = nullptr;
-	Texture texture = loadTexture(RESOURCE_DIR "jBMq9Yuvc98E82j0ChOgtWGIHtEHpA66ZftmN_S2d8U", device, &textureView);
+	// Texture texture = loadPixelData(RESOURCE_DIR "jBMq9Yuvc98E82j0ChOgtWGIHtEHpA66ZftmN_S2d8U", device, &textureView);
+	Texture texture = createTextureFromPixelData(*pixelData, device, &textureView);
 	if (!texture)
 	{
 		std::cerr << "Could not load texture!" << std::endl;
@@ -392,16 +377,6 @@ unsigned char *hello_boat()
 	}
 	std::cout << "Texture: " << texture << std::endl;
 	std::cout << "Texture view: " << textureView << std::endl;
-
-	// Load mesh data from OBJ file
-	std::vector<VertexAttributes> vertexData;
-	bool success = loadGeometryFromObj(RESOURCE_DIR "Di9PS_-XqIqaXbYKHmFST-ftqW5lHcmS0W6BO404I2s", vertexData);
-	if (!success)
-	{
-		std::cerr << "Could not load geometry!" << std::endl;
-		return nullptr;
-	}
-	std::cout << "Loaded " << vertexData.size() << " vertices" << std::endl;
 
 	// Create vertex buffer
 	BufferDescriptor bufferDesc;
@@ -556,6 +531,10 @@ unsigned char *hello_boat()
 
 	// Instead of swapChain.present()
 	unsigned char *png = encodeTexturePng(device, targetTexture);
+
+	// // Dummy value "myfakepng"
+	// unsigned char *png = (unsigned char *)"myfakepng";
+
 	// saveTextureView("output.png", device, nextTexture, targetTexture.getWidth(), targetTexture.getHeight());
 
 	// pipeline.release();
@@ -567,12 +546,12 @@ unsigned char *hello_boat()
 	return png;
 }
 
-ShaderModule loadShaderModule(const fs::path &path, Device device)
+bool loadShaderDesc(const fs::path &path, ShaderModuleWGSLDescriptor &shaderCodeDesc, ShaderModuleDescriptor &shaderDesc)
 {
 	std::ifstream file(path);
 	if (!file.is_open())
 	{
-		return nullptr;
+		return false;
 	}
 	file.seekg(0, std::ios::end);
 	size_t size = file.tellg();
@@ -580,19 +559,20 @@ ShaderModule loadShaderModule(const fs::path &path, Device device)
 	std::string shaderSource(size, ' ');
 	file.seekg(0);
 	file.read(shaderSource.data(), size);
+	strncpy(shaderCode, shaderSource.c_str(), sizeof(shaderCode) - 1);
+	shaderCode[sizeof(shaderCode) - 1] = '\0'; // Ensure null-termination
 
-	ShaderModuleWGSLDescriptor shaderCodeDesc;
 	shaderCodeDesc.chain.next = nullptr;
 	shaderCodeDesc.chain.sType = SType::ShaderModuleWGSLDescriptor;
-	shaderCodeDesc.code = shaderSource.c_str();
-	ShaderModuleDescriptor shaderDesc;
+	shaderCodeDesc.code = shaderCode;
+
 	shaderDesc.nextInChain = &shaderCodeDesc.chain;
 #ifdef WEBGPU_BACKEND_WGPU
 	shaderDesc.hintCount = 0;
 	shaderDesc.hints = nullptr;
 #endif
 
-	return device.createShaderModule(shaderDesc);
+	return true;
 }
 
 bool loadGeometryFromObj(const fs::path &path, std::vector<VertexAttributes> &vertexData)
@@ -660,7 +640,7 @@ bool loadGeometryFromObj(const fs::path &path, std::vector<VertexAttributes> &ve
 	return true;
 }
 
-// Auxiliary function for loadTexture
+// Auxiliary function for mip map generation
 static void writeMipMaps(
 		Device device,
 		Texture texture,
@@ -745,7 +725,7 @@ static uint32_t bit_width(uint32_t m)
 	}
 }
 
-Texture loadTexture(const fs::path &path, Device device, TextureView *pTextureView)
+bool loadPixelData(const fs::path &path, PixelData &pixelData)
 {
 	int width, height, channels;
 	// Load from memory instead
@@ -753,7 +733,7 @@ Texture loadTexture(const fs::path &path, Device device, TextureView *pTextureVi
 	std::ifstream file(path);
 	if (!file.is_open())
 	{
-		return nullptr;
+		return false;
 	}
 	file.seekg(0, std::ios::end);
 	size_t size = file.tellg();
@@ -764,17 +744,29 @@ Texture loadTexture(const fs::path &path, Device device, TextureView *pTextureVi
 	file.read((char *)imageData, size);
 	file.close();
 
-	unsigned char *pixelData = stbi_load_from_memory(imageData, size, &width, &height, &channels, 4 /* force 4 channels */);
+	unsigned char *data = stbi_load_from_memory(imageData, size, &width, &height, &channels, 4 /* force 4 channels */);
 
-	// If data is null, loading failed.
-	if (nullptr == pixelData)
-		return nullptr;
+	if (!data)
+	{
+		std::cerr << "Could not load image!" << std::endl;
+		return false;
+	}
 
+	pixelData.width = width;
+	pixelData.height = height;
+	pixelData.channels = channels;
+	pixelData.data = data;
+
+	return true;
+}
+
+Texture createTextureFromPixelData(PixelData &pixelData, Device device, TextureView *pTextureView)
+{
 	// Use the width, height, channels and data variables here
 	TextureDescriptor textureDesc;
 	textureDesc.dimension = TextureDimension::_2D;
 	textureDesc.format = TextureFormat::RGBA8Unorm; // by convention for bmp, png and jpg file. Be careful with other formats.
-	textureDesc.size = {(unsigned int)width, (unsigned int)height, 1};
+	textureDesc.size = {(unsigned int)(pixelData.width), (unsigned int)(pixelData.height), 1};
 	textureDesc.mipLevelCount = bit_width(std::max(textureDesc.size.width, textureDesc.size.height));
 	textureDesc.sampleCount = 1;
 	textureDesc.usage = TextureUsage::TextureBinding | TextureUsage::CopyDst;
@@ -783,10 +775,7 @@ Texture loadTexture(const fs::path &path, Device device, TextureView *pTextureVi
 	Texture texture = device.createTexture(textureDesc);
 
 	// Upload data to the GPU texture
-	writeMipMaps(device, texture, textureDesc.size, textureDesc.mipLevelCount, pixelData);
-
-	stbi_image_free(pixelData);
-	// (Do not use data after this)
+	writeMipMaps(device, texture, textureDesc.size, textureDesc.mipLevelCount, pixelData.data);
 
 	if (pTextureView)
 	{
