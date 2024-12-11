@@ -70,8 +70,10 @@ describe('sqlite', async () => {
                     console.error(e)
                 }
                 // Recreating devices too quickly can cause a crash
+                const requestDevice = adapter.requestDevice()
+                console.log("Waiting for 1 second before creating a new device")
                 await new Promise((resolve) => setTimeout(resolve, 1000))
-                device = await adapter.requestDevice()
+                device = await requestDevice;
             }
         }
     });
