@@ -1,1 +1,1 @@
-unsigned char * run_hello_boat();
+unsigned char *run_hello_boat(int *len);

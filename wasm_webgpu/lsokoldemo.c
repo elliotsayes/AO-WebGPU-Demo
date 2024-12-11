@@ -5,16 +5,15 @@
 #include "lauxlib.h"
 
 #include "helloboat.h"
-
-int len = 94410;
+// int run_hello_boat(unsigned char *png);
 
 static int demo(lua_State *L)
 {
-    // Call the function
-    unsigned char * png = run_hello_boat();
+    int len;
+    unsigned char *png = run_hello_boat(&len);
 
     // lua_pushnumber(L, 0);
-    lua_pushlstring(L, png, len);
+    lua_pushlstring(L, (const char *)png, len);
 
     return 1;
 }

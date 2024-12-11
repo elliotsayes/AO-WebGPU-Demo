@@ -116,8 +116,13 @@ ShaderModuleDescriptor shaderDesc;
 PixelData *pixelData;
 std::vector<VertexAttributes> vertexData;
 
-unsigned char *hello_boat()
+// Global iteration counter
+int iteration = 0;
+
+unsigned char *hello_boat(int *len)
 {
+	iteration++;
+
 	Instance instance = wgpuCreateInstance(NULL);
 	Device device = emscripten_webgpu_get_device();
 	Queue queue = wgpuDeviceGetQueue(device);
@@ -156,7 +161,7 @@ unsigned char *hello_boat()
 #ifdef WEBGPU_BACKEND_WGPU
 	// TextureFormat swapChainFormat = surface.getPreferredFormat(adapter);
 #else
-	TextureFormat swapChainFormat = TextureFormat::BGRA8Unorm;
+	TextureFormat swapChainFormat = TextureFormat::RGBA8Unorm;
 #endif
 	// SwapChainDescriptor swapChainDesc;
 	// swapChainDesc.width = 640;
@@ -397,10 +402,14 @@ unsigned char *hello_boat()
 	bufferDesc.mappedAtCreation = false;
 	Buffer uniformBuffer = device.createBuffer(bufferDesc);
 
+	// Rotate around in a circle
+	float x = 3.0f * cos(iteration * 0.1f);
+	float y = 3.0f * sin(iteration * 0.1f);
+
 	// Upload the initial value of the uniforms
 	MyUniforms uniforms;
 	uniforms.modelMatrix = mat4x4(1.0);
-	uniforms.viewMatrix = glm::lookAt(vec3(-2.0f, -3.0f, 2.0f), vec3(0.0f), vec3(0, 0, 1));
+	uniforms.viewMatrix = glm::lookAt(vec3(-x, -y, 2.0f), vec3(0.0f), vec3(0, 0, 1));
 	uniforms.projectionMatrix = glm::perspective(45 * PI / 180, 640.0f / 480.0f, 0.01f, 100.0f);
 	uniforms.time = 1.0f;
 	uniforms.color = {0.0f, 1.0f, 0.4f, 1.0f};
@@ -533,10 +542,11 @@ unsigned char *hello_boat()
 	emscripten_sleep(0);
 
 	// Instead of swapChain.present()
-	unsigned char *png = encodeTexturePng(device, targetTexture);
+	unsigned char *png = encodeTexturePng(device, targetTexture, len);
 
 	// // Dummy value "myfakepng"
 	// unsigned char *png = (unsigned char *)"myfakepng";
+	// *len = 10;
 
 	// saveTextureView("output.png", device, nextTexture, targetTexture.getWidth(), targetTexture.getHeight());
 
@@ -798,7 +808,7 @@ Texture createTextureFromPixelData(PixelData &pixelData, Device device, TextureV
 }
 
 // extern c function
-extern "C" unsigned char *run_hello_boat()
+extern "C" unsigned char *run_hello_boat(int *len)
 {
-	return hello_boat();
+	return hello_boat(len);
 }

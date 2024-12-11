@@ -8,7 +8,7 @@
 #include <string>
 
 // Encode texture as png
-unsigned char * encodeTexturePng(wgpu::Device device, wgpu::Texture texture);
+unsigned char *encodeTexturePng(wgpu::Device device, wgpu::Texture texture, int *len);
 
 // Saving a texture view requires to blit it into another texture, because only textures can be retrieved
 // bool saveTextureView(const std::filesystem::path path, wgpu::Device device, wgpu::TextureView textureView, uint32_t width, uint32_t height);
@@ -16,7 +16,7 @@ unsigned char * encodeTexturePng(wgpu::Device device, wgpu::Texture texture);
 class FileRenderer {
 public:
 	FileRenderer(wgpu::Device device, uint32_t width, uint32_t height);
-	unsigned char * render(wgpu::Texture texture) const;
+	unsigned char *render(wgpu::Texture texture, int *len) const;
 	// bool render(const std::filesystem::path path, wgpu::TextureView textureView) const;
 
 private:
@@ -162,7 +162,8 @@ fn fs_main(@builtin(position) fragCoord: vec4<f32>) -> @location(0) vec4<f32> {
 	m_pixelBufferDesc = pixelBufferDesc;
 }
 
-unsigned char * FileRenderer::render(wgpu::Texture texture) const {
+unsigned char *FileRenderer::render(wgpu::Texture texture, int *len) const
+{
 	using namespace wgpu;
 	auto device = m_device;
 	auto width = m_width;
@@ -208,8 +209,7 @@ unsigned char * FileRenderer::render(wgpu::Texture texture) const {
 		//STBIWDEF int stbi_write_png_to_func(stbi_write_func *func, void *context, int x, int y, int comp, const void *data, int stride_bytes)
 		//STBIWDEF unsigned char *stbi_write_png_to_mem(const unsigned char *pixels, int stride_bytes, int x, int y, int n, int *out_len)
 		int bytesPerRow = 4 * width;
-		int len = 0;
-		png = stbi_write_png_to_mem(pixelData, bytesPerRow, (int)width, (int)height, 4, &len);
+		png = stbi_write_png_to_mem(pixelData, bytesPerRow, (int)width, (int)height, 4, len);
 
 		std::cout << "PNG size: " << len << "B" << std::endl;
 
@@ -291,14 +291,15 @@ unsigned char * FileRenderer::render(wgpu::Texture texture) const {
 // 	return render(path, renderTexture);
 // }
 
-unsigned char * encodeTexturePng(wgpu::Device device, wgpu::Texture texture) {
+unsigned char *encodeTexturePng(wgpu::Device device, wgpu::Texture texture, int *len)
+{
 	using namespace wgpu;
 	uint32_t width = texture.getWidth();
 	uint32_t height = texture.getHeight();
 
 	FileRenderer renderer = FileRenderer(device, width, height);
 
-	return renderer.render(texture);
+	return renderer.render(texture, len);
 }
 
 // bool saveTextureView(const std::filesystem::path path, wgpu::Device device, wgpu::TextureView textureView, uint32_t width, uint32_t height) {
