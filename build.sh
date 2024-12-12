@@ -17,7 +17,9 @@ AO_IMAGE_SYNC="p3rmaw3b/ao:webgpu-sync"
 EMXX_CFLAGS="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1"
 EMXX_CFLAGS_LUA="-s SUPPORT_LONGJMP=1 -s USE_WEBGPU=1 /lua-5.3.4/src/liblua.a -I/lua-5.3.4/src"
 
-# Build wasm_webgpu into a library with emscripten
+# Build wasm_webgpu libraries with emscripten
+docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
+		"cd /wasm_webgpu && emcc -c hellotriangle.cpp -o hellotriangle.o ${EMXX_CFLAGS} && emar r hellotriangle.a hellotriangle.o"
 docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 		"cd /wasm_webgpu && emcc -c helloboat.cpp -o helloboat.o ${EMXX_CFLAGS} && emar r helloboat.a helloboat.o"
 
@@ -29,6 +31,7 @@ docker run -v ${WEBGPU_DIR}:/wasm_webgpu ${AO_IMAGE} sh -c \
 sudo chmod -R 777 ${WEBGPU_DIR}
 
 # # Copy to the libs directory
+cp ${WEBGPU_DIR}/hellotriangle.a $LIBS_DIR/hellotriangle.a
 cp ${WEBGPU_DIR}/helloboat.a $LIBS_DIR/helloboat.a
 cp ${WEBGPU_DIR}/lsokoldemo.a $LIBS_DIR/lsokoldemo.a
 
