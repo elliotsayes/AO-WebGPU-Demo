@@ -121,8 +121,6 @@ int iteration = 0;
 
 unsigned char *hello_boat(int *len)
 {
-	iteration++;
-
 	Instance instance = wgpuCreateInstance(NULL);
 	Device device = emscripten_webgpu_get_device();
 	Queue queue = wgpuDeviceGetQueue(device);
@@ -403,13 +401,14 @@ unsigned char *hello_boat(int *len)
 	Buffer uniformBuffer = device.createBuffer(bufferDesc);
 
 	// Rotate around in a circle
-	float x = 3.0f * cos(iteration * 0.1f);
-	float y = 3.0f * sin(iteration * 0.1f);
+	float x = 3.0f * cos(iteration * 0.005f * 2 * PI);
+	float y = 3.0f * sin(iteration * 0.005f * 2 * PI);
+	float z = 2.0f + 1.0f * cos(iteration * 0.005f * 2 * PI * 2);
 
 	// Upload the initial value of the uniforms
 	MyUniforms uniforms;
 	uniforms.modelMatrix = mat4x4(1.0);
-	uniforms.viewMatrix = glm::lookAt(vec3(-x, -y, 2.0f), vec3(0.0f), vec3(0, 0, 1));
+	uniforms.viewMatrix = glm::lookAt(vec3(x, y, z), vec3(0.0f), vec3(0, 0, 1));
 	uniforms.projectionMatrix = glm::perspective(45 * PI / 180, 640.0f / 480.0f, 0.01f, 100.0f);
 	uniforms.time = 1.0f;
 	uniforms.color = {0.0f, 1.0f, 0.4f, 1.0f};
@@ -555,6 +554,8 @@ unsigned char *hello_boat(int *len)
 	// device.release();
 	// instance.release();
 	// surface.release();
+
+	iteration++;
 
 	return png;
 }

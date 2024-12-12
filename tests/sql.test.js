@@ -28,7 +28,7 @@ describe('sqlite', async () => {
         timeout: 1000 * 60 * 10,
     }, async () => {
         let device = await adapter.requestDevice()
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 300; i++) {
             console.log("=====================================")
             console.log(`Iteration: ${i}`)
             console.log("=====================================")
@@ -58,7 +58,9 @@ describe('sqlite', async () => {
             const hexString = result.Output.data
             const binaryData = Buffer.from(hexString, 'hex')
             console.log(`Hex: ${hexString.length}, Binary: ${binaryData.length}`)
-            fs.writeFileSync(`output/frame_${i}.png`, binaryData, {
+            fs.writeFileSync(`output/frame_${
+                i.toString().padStart(3, '0')
+            }.png`, binaryData, {
                 encoding: 'binary'
             })
 
