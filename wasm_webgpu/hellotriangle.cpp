@@ -279,7 +279,8 @@ fn fs_main() -> @location(0) vec4f {
 	emscripten_sleep(0);
 
 	// Instead of swapChain.present()
-	unsigned char * png = encodeTexturePng(device, targetTexture);
+	int len;
+	unsigned char *png = encodeTexturePng(device, targetTexture, &len);
 	//saveTextureView("output.png", device, nextTexture, targetTexture.getWidth(), targetTexture.getHeight());
 
 	// pipeline.release();

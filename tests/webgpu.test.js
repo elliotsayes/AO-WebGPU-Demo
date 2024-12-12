@@ -21,13 +21,60 @@ const options = {
     dataRaceValidator: validateDataRaceWgsl,
     // unsafe: true,
 }
-describe('WebGPU', async () => {
+describe('WebGPU render', async () => {
     const handle = await AoLoader(wasm, options)
+    let device = await adapter.requestDevice()
     let Memory = null;
-    it('render images', {
+
+    it('still', {
+    }, async () => {
+        const opts = {
+            preinitializedWebGPUDevice: device,
+            outputMemory: false,
+        }
+
+        // load handler
+        const result = await handle(
+            Memory, 
+            getEval(`
+            local sokoldemo = require('lsokoldemo')
+            local s = sokoldemo.demo()
+            local Hex = require(".crypto.util.hex")
+            return Hex.stringToHex(s)
+            `),
+            env,
+            opts,
+        );
+        Memory = result.Memory;
+        console.log('Memory', Memory?.length);
+
+        // assert.ok(true)
+        
+        const hexString = result.Output.data
+        const binaryData = Buffer.from(hexString, 'hex')
+        console.log(`Hex: ${hexString.length}, Binary: ${binaryData.length}`)
+        fs.writeFileSync(`output/still.png`, binaryData, {
+            encoding: 'binary'
+        })
+        
+        if (!options.unsafe) {
+            // Recreate the device for safety
+            try {
+                device.destroy()
+            } catch (e) {
+                console.error(e)
+            }
+            // Recreating devices too quickly can cause a crash
+            const requestDevice = adapter.requestDevice()
+            console.log("Waiting for 1 second before creating a new device")
+            await new Promise((resolve) => setTimeout(resolve, 1000))
+            device = await requestDevice;
+        }
+    });
+
+    it('frames', {
         timeout: 1000 * 60 * 10,
     }, async () => {
-        let device = await adapter.requestDevice()
         for (let i = 0; i < 300; i++) {
             console.log("=====================================")
             console.log(`Iteration: ${i}`)
