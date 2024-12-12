@@ -11,6 +11,6 @@
         "wgsl-to-json": "^0.1.1"
     },
     "scripts": {
-        "test": "node --test sql.test.js"
+        "test": "node --test webgpu.test.js"
     }
 }

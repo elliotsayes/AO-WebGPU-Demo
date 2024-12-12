@@ -21,10 +21,10 @@ const options = {
     dataRaceValidator: validateDataRaceWgsl,
     // unsafe: true,
 }
-describe('sqlite', async () => {
+describe('WebGPU', async () => {
     const handle = await AoLoader(wasm, options)
     let Memory = null;
-    it('Create DB', {
+    it('render images', {
         timeout: 1000 * 60 * 10,
     }, async () => {
         let device = await adapter.requestDevice()
