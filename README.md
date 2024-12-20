@@ -1,4 +1,4 @@
-# AO-SQLite
+# AO-WebGPU-Demo
 
 ## Setup
 
