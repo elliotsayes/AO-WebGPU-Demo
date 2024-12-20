@@ -48,6 +48,7 @@ docker run -e DEBUG=1 --platform linux/amd64 -v ./:/src ${AO_IMAGE} ao-build-mod
 cp ${PROCESS_DIR}/process.js ${SCRIPT_DIR}/ao/loader/src/formats/emscripten-webgpu-unsafe.cjs
 
 cd ${SCRIPT_DIR}/ao/loader
+npm install
 npm run format-file src/formats/emscripten-webgpu-sync.cjs
 npm run format-file src/formats/emscripten-webgpu-unsafe.cjs
 npm run patch:webgpu

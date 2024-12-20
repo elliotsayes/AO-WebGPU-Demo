@@ -1,12 +1,11 @@
-[submodule "aos"]
-	path = aos
-	url = https://github.com/permaweb/aos.git
 [submodule "ao"]
 	path = ao
-	url = https://github.com/permaweb/ao
-[submodule "emsdk"]
-	path = emsdk
-	url = https://github.com/emscripten-core/emsdk
+	url = https://github.com/elliotsayes/ao
+	branch = webgpu
+[submodule "aos"]
+	path = aos
+	url = https://github.com/elliotsayes/aos
+	branch = webgpu
 [submodule "emscripten"]
 	path = emscripten
 	url = https://github.com/elliotsayes/emscripten
