@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
 
 1. run `git submodule update --init --recursive` 
 2. run `./build_docker.sh`
-3. copy the `gml` source files from [this folder](https://github.com/g-truc/glm/tree/master/glm) into [wasm_webgpu/glm](wasm_webgpu/glm)
+3. copy the `glm` source files from [this folder](https://github.com/g-truc/glm/tree/master/glm) into [wasm_webgpu/glm](wasm_webgpu/glm)
 4. run `./build.sh`
 
 ## Test
