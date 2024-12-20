@@ -1,5 +1,7 @@
 # AO-WebGPU-Demo
 
+https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
+
 ## Setup
 
 1. run `./build_docker.sh`
