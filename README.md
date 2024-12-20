@@ -15,3 +15,9 @@ https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
 2. run `npm install`
 3. run `npm run test:still` or `npm run test:frames`
 4. check output folder `tests/output` for the generated image(s)
+
+## Diffs:
+
+- [ao](https://github.com/permaweb/ao/compare/main...elliotsayes:ao:webgpu)
+- [aos](https://github.com/permaweb/aos/compare/main...elliotsayes:aos:webgpu)
+- [emscripten](https://github.com/emscripten-core/emscripten/compare/main...elliotsayes:emscripten:webgpu-sync)
