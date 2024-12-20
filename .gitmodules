@@ -1,0 +1,12 @@
+[submodule "ao"]
+	path = ao
+	url = https://github.com/elliotsayes/ao
+	branch = webgpu
+[submodule "aos"]
+	path = aos
+	url = https://github.com/elliotsayes/aos
+	branch = webgpu
+[submodule "emscripten"]
+	path = emscripten
+	url = https://github.com/elliotsayes/emscripten
+	branch = webgpu-sync
