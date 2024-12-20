@@ -8,9 +8,11 @@
         "@kmamal/gpu": "^0.1.3",
         "@permaweb/ao-loader": "file:../ao/loader",
         "@permaweb/weavedrive": "file:../aos/extensions/weavedrive",
-        "wgsl-to-json": "^0.1.1"
+        "wgsl-to-json": "^0.1.0-1"
     },
     "scripts": {
-        "test": "node --test webgpu.test.js"
+        "test": "node --test webgpu.test.js",
+        "test:still": "node --test --test-name-pattern still",
+        "test:frames": "node --test --test-name-pattern frames"
     }
 }

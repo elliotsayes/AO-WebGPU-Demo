@@ -1,4 +1,4 @@
-import { describe, it } from 'node:test'
+import { before, describe, it } from 'node:test'
 import * as assert from 'node:assert'
 import AoLoader from '@permaweb/ao-loader'
 import fs from 'fs'
@@ -22,9 +22,14 @@ const options = {
     // unsafe: true,
 }
 describe('WebGPU render', async () => {
-    const handle = await AoLoader(wasm, options)
-    let device = await adapter.requestDevice()
+    let handle = null;
+    let device = null;
     let Memory = null;
+
+    before(async () => {
+        handle = await AoLoader(wasm, options);
+        device = await adapter.requestDevice();
+    });
 
     it('still', {
     }, async () => {
