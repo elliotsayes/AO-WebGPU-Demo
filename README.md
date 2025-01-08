@@ -43,7 +43,7 @@ Render pipeline: <wgpu::RenderPipeline 0x1>
   'CommandBufferRelease',
   'QueueOnSubmittedWorkDone[1]'
 ]
-Running ./faial-drf --all-dims --all-levels --json <wgsl_json>
+Running [ './faial-drf --all-dims --all-levels --json <wgsl_json>' ]
 Kernel DRF status { fs_main: true, vs_main: true }
 All Kernels Data-Race Free? true
 [Asyncify] running SleepTasks []
@@ -61,7 +61,7 @@ All Kernels Data-Race Free? true
   'BufferMapAsync',
   'QueueOnSubmittedWorkDone[1]'
 ]
-Running ./faial-drf --all-dims --all-levels --json <wgsl_json>
+Running [ './faial-drf --all-dims --all-levels --json <wgsl_json>' ]
 Kernel DRF status { fs_main: true, vs_main: true }
 All Kernels Data-Race Free? true
 PNG size: 0x40589d0B

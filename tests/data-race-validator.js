@@ -12,7 +12,7 @@ export async function validateDataRaceWgsl(shaderSource) {
   
   return new Promise((resolve, reject) => {
     const baseCommand = `${faialDrfPath} ${faialDrfOptions.join(' ')} --json`;
-    console.log("Running", `${baseCommand} <wgsl_json>`)
+    console.log("Running", [`${baseCommand} <wgsl_json>`])
 
     // TODO: THIS IS SUPER UNSAFE!!!
     const fullCommand = `${baseCommand} '${wgslJsonString}'`;
