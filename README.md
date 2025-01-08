@@ -11,10 +11,11 @@ https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
 
 ## Test
 
-1. cd into `tests`
-2. run `npm install`
-3. run `npm run test:still` or `npm run test:frames`
-4. check output folder `tests/output` for the generated image(s)
+1. (optional) verbose output from the loader by running `(cd ao/loader && npm run patch:log)`
+2. cd into `tests`
+3. run `npm install`
+4. run `npm run test:still` or `npm run test:frames`
+5. check output folder `tests/output` for the generated image(s)
 
 ## Example output
 
