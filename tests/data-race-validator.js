@@ -1,14 +1,22 @@
 import { wgsl_to_json } from "wgsl-to-json"
 import { exec } from "node:child_process"
 
-const pathToFaialDrfExe = "./faial-drf"
+const faialDrfPath = "./faial-drf"
+const faialDrfOptions = [
+  "--all-dims",
+  "--all-levels",
+]
 
 export async function validateDataRaceWgsl(shaderSource) {
   const wgslJsonString = await wgsl_to_json(shaderSource)
   
   return new Promise((resolve, reject) => {
+    const baseCommand = `${faialDrfPath} ${faialDrfOptions.join(' ')} --json`;
+    console.log("Running", `${baseCommand} <wgsl_json>`)
+
     // TODO: THIS IS SUPER UNSAFE!!!
-    exec(`${pathToFaialDrfExe} --json '${wgslJsonString}'`, (error, stdout, stderr) => {
+    const fullCommand = `${baseCommand} '${wgslJsonString}'`;
+    exec(fullCommand, (error, stdout, stderr) => {
       if (error) {
         reject(error)
       }
