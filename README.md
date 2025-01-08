@@ -4,7 +4,7 @@ https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
 
 ## Setup
 
-1. run `git submodule update --init --recursive` 
+1. run `git submodule update --init --recursive`
 2. run `./build_docker.sh`
 3. copy the `glm` source files from [this folder](https://github.com/g-truc/glm/tree/master/glm) into [wasm_webgpu/glm](wasm_webgpu/glm)
 4. run `./build.sh`
@@ -17,7 +17,8 @@ https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
 4. check output folder `tests/output` for the generated image(s)
 
 ## Example output
-```
+
+```txt
 using GPU adapter: Apple M1 Max
 ...
 Got device: <wgpu::Device 0x1>
@@ -64,7 +65,7 @@ PNG size: 0x40589d0B
 ...
 ```
 
-## Diffs:
+## Diffs
 
 - [ao](https://github.com/permaweb/ao/compare/main...elliotsayes:ao:webgpu)
 - [aos](https://github.com/permaweb/aos/compare/main...elliotsayes:aos:webgpu)
