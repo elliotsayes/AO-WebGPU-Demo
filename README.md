@@ -11,7 +11,7 @@ https://github.com/user-attachments/assets/f3714ec0-64a4-467a-951d-2109b9fb2ae3
 
 ## Test
 
-1. (optional) verbose output from the loader by running `(cd ao/loader && npm run patch:log)`
+1. (optional) verbose output from the loader by running `(cd ao/loader && npm run patch:log && npm run build)`
 2. cd into `tests`
 3. run `npm install`
 4. run `npm run test:still` or `npm run test:frames`
